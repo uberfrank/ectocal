@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendriers ECTO</title>
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #1a7f5a;   /* ecto.coop brand green */
+      color: #fff;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    header .logo {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    /* ── Main layout ── */
+    main {
+      max-width: 1100px;
+      margin: 1.5rem auto;
+      padding: 0 1rem 2rem;
+    }
+
+    /* ── Calendar wrapper ── */
+    .calendar-wrapper {
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+      overflow: hidden;
+      /* 800×600 is the natural iframe size; maintain that ratio */
+      position: relative;
+      width: 100%;
+      padding-top: 75%; /* 600/800 aspect ratio */
+    }
+
+    .calendar-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #888;
+      padding: 1rem;
+    }
+
+    footer a { color: #1a7f5a; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="https://ecto.coop">ECTO</a>
+    <h1>Calendriers</h1>
+  </header>
+
+  <main>
+    <div class="calendar-wrapper" id="calWrapper">
+      <iframe
+        id="ectoCalendar"
+        src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FToronto&showPrint=0&src=Y18wNTIzZDQ1MTc3ZDlkMmM3OWZlYzg1MWUzNWQ5ZDhkNjBkOTMwOWI3ZTRkZTg3OTY4NTk3MWRmYzExOWJjYzQxQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=ZWN0by5jb29wX291ZHUzOHJlb21zYTliMG82M241cDJodjk4QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y18wYjZhMjIzMGYxMDAxYjg2MWFkMzYxNzE5ZDY0OGE0Mjc0MGZmYTI5Y2I0OWI2MjRlNjIyMjNmMWM5N2FlOTI5QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y19iNDhlMDM0MmVlMjAxNDQ4YWJmZDdlOTYzYjcwOGNjNzBhNmRkZjEwMzI5NjZmMzdlOGUwNzBlNjlkM2NiYjBiQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23ef6c00&color=%23f6bf26&color=%23795548&color=%237986cb"
+        title="Calendriers ECTO"
+        allowfullscreen
+        loading="lazy"
+      ></iframe>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="year"></span> <a href="https://ecto.coop">ECTO coopérative de travail</a></p>
+  </footer>
+
+  <script>
+    /* Update copyright year automatically */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /*
+     * Responsive calendar scaling
+     * ─────────────────────────────
+     * Google Calendar's embed is designed around an 800 × 600 viewport.
+     * The CSS padding-top trick already makes the *container* fluid, but the
+     * content inside the iframe is still rendered at the iframe's pixel size.
+     *
+     * On narrow screens we also inject a CSS transform scale so that the
+     * Google Calendar UI itself is legible rather than being clipped or tiny.
+     *
+     * Breakpoint: below 600 px wide we switch to a scaled view so that the
+     * full month grid remains readable.
+     */
+    (function () {
+      var NATIVE_WIDTH  = 800;
+      var NATIVE_HEIGHT = 600;
+      var MOBILE_BREAK  = 600;
+
+      var wrapper  = document.getElementById('calWrapper');
+      var iframe   = document.getElementById('ectoCalendar');
+
+      function resize() {
+        var availableWidth = wrapper.clientWidth;
+
+        if (availableWidth < MOBILE_BREAK) {
+          /*
+           * On small screens: render the iframe at its native 800 × 600 size,
+           * then scale it down with CSS transform so the whole calendar fits
+           * within the available width.  We also update the wrapper height so
+           * no clipping occurs.
+           */
+          var scale = availableWidth / NATIVE_WIDTH;
+          var scaledHeight = Math.ceil(NATIVE_HEIGHT * scale);
+
+          iframe.style.width     = NATIVE_WIDTH  + 'px';
+          iframe.style.height    = NATIVE_HEIGHT + 'px';
+          iframe.style.transform = 'scale(' + scale + ')';
+          iframe.style.transformOrigin = 'top left';
+          iframe.style.position  = 'absolute';
+          iframe.style.top       = '0';
+          iframe.style.left      = '0';
+
+          /* Override the padding-top aspect-ratio trick with a fixed height */
+          wrapper.style.paddingTop = '0';
+          wrapper.style.height     = scaledHeight + 'px';
+
+        } else {
+          /* On wider screens: let the CSS aspect-ratio approach handle everything */
+          iframe.style.width     = '100%';
+          iframe.style.height    = '100%';
+          iframe.style.transform = '';
+          iframe.style.transformOrigin = '';
+          wrapper.style.height   = '';
+          wrapper.style.paddingTop = '75%';
+        }
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+    }());
+  </script>
+
+</body>
+</html>
