@@ -8,6 +8,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    /* ── Fonts (self-hosted on ecto.coop, same as the main site) ── */
+    @font-face {
+      font-family: "Super Sunkissed";
+      font-weight: 400;
+      font-display: swap;
+      src: url(https://ecto.coop/wp-content/uploads/Super-Sunkissed.ttf) format("truetype");
+    }
+
     /* ── Reset & base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -17,10 +25,27 @@
       color: #0f2424;
     }
 
+    /* ── Top bar (brand navy, matches ecto.coop's utility bar) ── */
+    .topbar {
+      background: #0000a3;
+      color: #fff;
+      display: flex;
+      justify-content: flex-end;
+      padding: 0.5rem 1.5rem;
+    }
+
+    .topbar a {
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .topbar a:hover { color: #cbf3d2; }
+
     /* ── Header ── */
     header {
       background: #fff;
-      box-shadow: 0 0 5px 0 rgba(15, 36, 36, 0.06);
       padding: 1rem 1.5rem;
       display: flex;
       align-items: center;
@@ -39,11 +64,11 @@
     }
 
     header h1 {
-      font-size: 1.05rem;
-      font-weight: 500;
-      color: #0f2424;
+      font-family: "Super Sunkissed", "Sora", sans-serif;
+      font-weight: 400;
+      font-size: 1.6rem;
+      color: #0000a3;
       padding-left: 1rem;
-      border-left: 1px solid rgba(15, 36, 36, 0.15);
     }
 
     /* ── Main layout ── */
@@ -83,11 +108,15 @@
       padding: 1rem;
     }
 
-    footer a { color: #0f2424; font-weight: 600; text-decoration: none; }
-    footer a:hover { color: #75cac7; }
+    footer a { color: #0000a3; font-weight: 600; text-decoration: none; }
+    footer a:hover { color: #ff755c; }
   </style>
 </head>
 <body>
+
+  <div class="topbar">
+    <a href="https://ecto.coop">&larr; Retour à ecto.coop</a>
+  </div>
 
   <header>
     <a class="logo" href="https://ecto.coop">
